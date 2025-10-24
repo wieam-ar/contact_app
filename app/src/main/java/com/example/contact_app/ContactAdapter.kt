@@ -1,17 +1,20 @@
 package com.example.contact_app
 
-
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Filter
+import android.widget.Filterable
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.random.Random
 
-class ContactAdapter(private val contacts: List<Contact>) :
-    RecyclerView.Adapter<ContactAdapter.ContactViewHolder>() {
+class ContactAdapter(private var contacts: List<Contact>) :
+    RecyclerView.Adapter<ContactAdapter.ContactViewHolder>(), Filterable {
+
+    private var contactsFiltered = contacts
 
     private val colors = listOf(
         "#FF6F61", "#6B5B95", "#88B04B", "#F7CAC9", "#92A8D1",
@@ -31,17 +34,36 @@ class ContactAdapter(private val contacts: List<Contact>) :
     }
 
     override fun onBindViewHolder(holder: ContactViewHolder, position: Int) {
-        val contact = contacts[position]
+        val contact = contactsFiltered[position]
         holder.nameText.text = contact.name
         holder.phoneText.text = contact.phone
-
-        val letter = contact.name.first().uppercase()
-        holder.iconText.text = letter
+        holder.iconText.text = contact.name.first().uppercase()
 
         val color = Color.parseColor(colors[position % colors.size])
         val background = holder.iconText.background.mutate() as GradientDrawable
         background.setColor(color)
     }
 
-    override fun getItemCount(): Int = contacts.size
+    override fun getItemCount(): Int = contactsFiltered.size
+
+    override fun getFilter(): Filter {
+        return object : Filter() {
+            override fun performFiltering(constraint: CharSequence?): FilterResults {
+                val searchText = constraint.toString().lowercase()
+                val filteredList = if (searchText.isEmpty()) {
+                    contacts
+                } else {
+                    contacts.filter { it.name.lowercase().contains(searchText) }
+                }
+                val results = FilterResults()
+                results.values = filteredList
+                return results
+            }
+
+            override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
+                contactsFiltered = results?.values as List<Contact>
+                notifyDataSetChanged()
+            }
+        }
+    }
 }

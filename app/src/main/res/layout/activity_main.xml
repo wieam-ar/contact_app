@@ -6,6 +6,20 @@
     android:padding="16dp"
     android:background="#F9FAFB">
 
+    <!-- Search bar -->
+    <EditText
+        android:id="@+id/searchBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="🔍 Search contact..."
+        android:padding="12dp"
+        android:background="@android:color/white"
+        android:layout_marginBottom="10dp"
+        android:elevation="3dp"
+        android:textSize="16sp"
+        android:inputType="text" />
+
+    <!-- RecyclerView for contacts -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
