@@ -1,7 +1,9 @@
 package com.example.contact_app
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +11,6 @@ import android.widget.Filter
 import android.widget.Filterable
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import kotlin.random.Random
 
 class ContactAdapter(private var contacts: List<Contact>) :
     RecyclerView.Adapter<ContactAdapter.ContactViewHolder>(), Filterable {
@@ -42,6 +43,17 @@ class ContactAdapter(private var contacts: List<Contact>) :
         val color = Color.parseColor(colors[position % colors.size])
         val background = holder.iconText.background.mutate() as GradientDrawable
         background.setColor(color)
+
+        // 🟢 عند الضغط على contact
+        holder.itemView.setOnClickListener {
+            val context = it.context
+            val phoneNumber = contact.phone
+
+            // يفتح تطبيق المكالمات ومعاه الرقم
+            val intent = Intent(Intent.ACTION_DIAL)
+            intent.data = Uri.parse("tel:$phoneNumber")
+            context.startActivity(intent)
+        }
     }
 
     override fun getItemCount(): Int = contactsFiltered.size
